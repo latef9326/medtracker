@@ -29,7 +29,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-        # Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -49,20 +48,14 @@ jobs:
 
       - name: Apply migrations
         env:
-          DB_NAME: medtracker_db
-          DB_USER: Developer
-          DB_PASSWORD: test
-          DB_HOST: localhost
-          DB_PORT: 5432
+          DATABASE_URL: postgres://Developer:test@localhost:5432/medtracker_db
         run: |
-          python manage.py migrate --noinput
+          python manage.py migrate
 
       - name: Run tests
         env:
-          DB_NAME: medtracker_db
-          DB_USER: Developer
-          DB_PASSWORD: test
-          DB_HOST: localhost
-          DB_PORT: 5432
+          DATABASE_URL: postgres://Developer:test@localhost:5432/medtracker_db
+          DEBUG: "False"
+          SECRET_KEY: "test-secret-key-for-github-actions"
         run: |
-          python manage.py test
+          python manage.py test medtrackerapp.tests
