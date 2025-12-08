@@ -52,6 +52,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "medtracker.wsgi.application"
 
+# DATABASES konfiguracja
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -62,6 +63,17 @@ DATABASES = {
         "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
+
+# Dla testów w GitHub Actions - użyj SQLite jeśli DATABASE_URL nie jest ustawiony
+import sys
+if 'test' in sys.argv:
+    # Użyj SQLite dla testów (szybsze i nie wymaga PostgreSQL w CI)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
+    }
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"

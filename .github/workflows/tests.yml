@@ -48,14 +48,23 @@ jobs:
 
       - name: Apply migrations
         env:
-          DATABASE_URL: postgres://Developer:test@localhost:5432/medtracker_db
+          DB_NAME: medtracker_db
+          DB_USER: Developer
+          DB_PASSWORD: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+          SECRET_KEY: "test-secret-key-for-github-actions"
         run: |
           python manage.py migrate
 
       - name: Run tests
         env:
-          DATABASE_URL: postgres://Developer:test@localhost:5432/medtracker_db
-          DEBUG: "False"
+          DB_NAME: medtracker_db
+          DB_USER: Developer
+          DB_PASSWORD: test
+          DB_HOST: localhost
+          DB_PORT: 5432
           SECRET_KEY: "test-secret-key-for-github-actions"
+          DEBUG: "False"
         run: |
           python manage.py test medtrackerapp.tests
