@@ -2,11 +2,9 @@ name: Unit tests
 
 on:
   push:
-    branches:
-      - dev
+    branches: [ dev ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   test:
@@ -16,13 +14,13 @@ jobs:
       postgres:
         image: postgres:18
         env:
-          POSTGRES_USER: django
-          POSTGRES_PASSWORD: django
-          POSTGRES_DB: testdb
+          POSTGRES_USER: Developer
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: medtracker_db
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U django -d testdb"
+          --health-cmd="pg_isready -U Developer -d medtracker_db"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -31,6 +29,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+        # Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -43,19 +42,27 @@ jobs:
 
       - name: Wait for Postgres
         run: |
-          until pg_isready -h localhost -p 5432 -U django -d testdb; do
+          until pg_isready -h localhost -p 5432 -U Developer; do
             echo "Waiting for Postgres..."
             sleep 2
           done
 
       - name: Apply migrations
         env:
-          DATABASE_URL: postgres://django:django@localhost:5432/testdb
+          DB_NAME: medtracker_db
+          DB_USER: Developer
+          DB_PASSWORD: test
+          DB_HOST: localhost
+          DB_PORT: 5432
         run: |
           python manage.py migrate --noinput
 
       - name: Run tests
         env:
-          DATABASE_URL: postgres://django:django@localhost:5432/testdb
+          DB_NAME: medtracker_db
+          DB_USER: Developer
+          DB_PASSWORD: test
+          DB_HOST: localhost
+          DB_PORT: 5432
         run: |
-          python manage.py test medtrackerapp/tests
+          python manage.py test
