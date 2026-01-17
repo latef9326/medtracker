@@ -3,12 +3,15 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# .env (opcjonalnie)
 dotenv_path = BASE_DIR / ".env"
 if dotenv_path.exists():
     load_dotenv(dotenv_path)
 
 SECRET_KEY = os.getenv("SECRET_KEY", "changeme")
 DEBUG = os.getenv("DEBUG", "True") == "True"
+
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
@@ -18,7 +21,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "rest_framework",
+    "drf_spectacular",           # ZMIENIONE: zamiast drf_yasg
+    "drf_spectacular_sidecar",   # DODANE: dla lepszego UI
+
     "medtrackerapp",
 ]
 
@@ -52,28 +59,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "medtracker.wsgi.application"
 
-# DATABASES konfiguracja
+# ✅ SQLite – ZERO PostgreSQL
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME", "medtracker_db"),
-        "USER": os.getenv("DB_USER", "Developer"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "test"),
-        "HOST": os.getenv("DB_HOST", "localhost"),
-        "PORT": os.getenv("DB_PORT", "5432"),
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
-# Dla testów w GitHub Actions - użyj SQLite jeśli DATABASE_URL nie jest ustawiony
-import sys
-if 'test' in sys.argv:
-    # Użyj SQLite dla testów (szybsze i nie wymaga PostgreSQL w CI)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
-        }
-    }
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
@@ -81,4 +73,19 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# ⭐ DODAJ NA KONIEC pliku ⭐
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'MedTracker API',
+    'DESCRIPTION': 'API documentation for MedTracker',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+}
