@@ -27,12 +27,18 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
+          pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Setup database
+        run: |
+          source venv/bin/activate
+          python manage.py migrate --noinput
 
       - name: Generate API documentation
         run: |
           source venv/bin/activate
-          python manage.py generateschema --file openapi-schema.yml
+          python manage.py spectacular --file openapi-schema.yml  # ✅ ZMIENIONE: spectacular zamiast generateschema
 
       - name: Check if docs are up to date
         run: |
