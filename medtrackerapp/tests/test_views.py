@@ -190,7 +190,7 @@ class DoseLogViewSetTests(APITestCase):
     # --- FILTER BY DATE ---
 
     def test_filter_logs_valid_range(self):
-        log = DoseLog.objects.create(medication=self.med, taken_at=self.now, was_taken=True)
+
 
         url = reverse("doselog-filter-by-date")
         url += f"?start={self.now.date()}&end={self.now.date()}"
