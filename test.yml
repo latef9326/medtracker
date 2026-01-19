@@ -1,0 +1,733 @@
+openapi: 3.0.3
+info:
+  title: MedTracker API
+  version: 1.0.0
+  description: API documentation for MedTracker
+paths:
+  /api/logs/:
+    get:
+      operationId: logs_list
+      description: API endpoint for viewing and managing dose logs.
+      tags:
+      - logs
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoseLog'
+          description: ''
+    post:
+      operationId: logs_create
+      description: API endpoint for viewing and managing dose logs.
+      tags:
+      - logs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoseLog'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoseLog'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DoseLog'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoseLog'
+          description: ''
+  /api/logs/{id}/:
+    get:
+      operationId: logs_retrieve
+      description: API endpoint for viewing and managing dose logs.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dose log.
+        required: true
+      tags:
+      - logs
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoseLog'
+          description: ''
+    put:
+      operationId: logs_update
+      description: API endpoint for viewing and managing dose logs.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dose log.
+        required: true
+      tags:
+      - logs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoseLog'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoseLog'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DoseLog'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoseLog'
+          description: ''
+    patch:
+      operationId: logs_partial_update
+      description: API endpoint for viewing and managing dose logs.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dose log.
+        required: true
+      tags:
+      - logs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDoseLog'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDoseLog'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDoseLog'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoseLog'
+          description: ''
+    delete:
+      operationId: logs_destroy
+      description: API endpoint for viewing and managing dose logs.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this dose log.
+        required: true
+      tags:
+      - logs
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/logs/filter/:
+    get:
+      operationId: logs_filter_retrieve
+      description: Filter dose logs by date range.
+      tags:
+      - logs
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoseLog'
+          description: ''
+  /api/medications/:
+    get:
+      operationId: medications_list
+      description: API endpoint for viewing and managing medications.
+      tags:
+      - medications
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Medication'
+          description: ''
+    post:
+      operationId: medications_create
+      description: API endpoint for viewing and managing medications.
+      tags:
+      - medications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Medication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Medication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Medication'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Medication'
+          description: ''
+  /api/medications/{id}/:
+    get:
+      operationId: medications_retrieve
+      description: API endpoint for viewing and managing medications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medication.
+        required: true
+      tags:
+      - medications
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Medication'
+          description: ''
+    put:
+      operationId: medications_update
+      description: API endpoint for viewing and managing medications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medication.
+        required: true
+      tags:
+      - medications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Medication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Medication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Medication'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Medication'
+          description: ''
+    patch:
+      operationId: medications_partial_update
+      description: API endpoint for viewing and managing medications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medication.
+        required: true
+      tags:
+      - medications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMedication'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMedication'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMedication'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Medication'
+          description: ''
+    delete:
+      operationId: medications_destroy
+      description: API endpoint for viewing and managing medications.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medication.
+        required: true
+      tags:
+      - medications
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/medications/{id}/expected-doses/:
+    get:
+      operationId: medications_expected_doses_retrieve
+      description: |-
+        Calculate expected doses for given days.
+
+        GET /api/medications/<id>/expected-doses/?days=X
+        Returns: {medication_id, days, expected_doses}
+
+        Validates:
+        - 'days' parameter is required
+        - 'days' must be a positive integer
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medication.
+        required: true
+      tags:
+      - medications
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Medication'
+          description: ''
+  /api/medications/{id}/info/:
+    get:
+      operationId: medications_info_retrieve
+      description: Fetch external drug information for a medication.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this medication.
+        required: true
+      tags:
+      - medications
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Medication'
+          description: ''
+  /api/notes/:
+    get:
+      operationId: notes_list
+      description: |-
+        API endpoint for managing doctor's notes.
+
+        Notes are associated with medications and can be used to track
+        observations, side effects, or treatment adjustments.
+
+        Allowed operations:
+        - GET /api/notes/ - list all notes
+        - GET /api/notes/<id>/ - retrieve specific note
+        - POST /api/notes/ - create new note
+        - DELETE /api/notes/<id>/ - delete note
+
+        Update operations (PUT, PATCH) are intentionally disabled.
+      tags:
+      - notes
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+          description: ''
+    post:
+      operationId: notes_create
+      description: |-
+        API endpoint for managing doctor's notes.
+
+        Notes are associated with medications and can be used to track
+        observations, side effects, or treatment adjustments.
+
+        Allowed operations:
+        - GET /api/notes/ - list all notes
+        - GET /api/notes/<id>/ - retrieve specific note
+        - POST /api/notes/ - create new note
+        - DELETE /api/notes/<id>/ - delete note
+
+        Update operations (PUT, PATCH) are intentionally disabled.
+      tags:
+      - notes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Note'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Note'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+  /api/notes/{id}/:
+    get:
+      operationId: notes_retrieve
+      description: |-
+        API endpoint for managing doctor's notes.
+
+        Notes are associated with medications and can be used to track
+        observations, side effects, or treatment adjustments.
+
+        Allowed operations:
+        - GET /api/notes/ - list all notes
+        - GET /api/notes/<id>/ - retrieve specific note
+        - POST /api/notes/ - create new note
+        - DELETE /api/notes/<id>/ - delete note
+
+        Update operations (PUT, PATCH) are intentionally disabled.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this note.
+        required: true
+      tags:
+      - notes
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+    put:
+      operationId: notes_update
+      description: Disable update operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this note.
+        required: true
+      tags:
+      - notes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Note'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Note'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+    patch:
+      operationId: notes_partial_update
+      description: Disable partial update operations.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this note.
+        required: true
+      tags:
+      - notes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+    delete:
+      operationId: notes_destroy
+      description: |-
+        API endpoint for managing doctor's notes.
+
+        Notes are associated with medications and can be used to track
+        observations, side effects, or treatment adjustments.
+
+        Allowed operations:
+        - GET /api/notes/ - list all notes
+        - GET /api/notes/<id>/ - retrieve specific note
+        - POST /api/notes/ - create new note
+        - DELETE /api/notes/<id>/ - delete note
+
+        Update operations (PUT, PATCH) are intentionally disabled.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this note.
+        required: true
+      tags:
+      - notes
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    DoseLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        medication:
+          type: integer
+        medication_name:
+          type: string
+          readOnly: true
+        taken_at:
+          type: string
+          format: date-time
+        was_taken:
+          type: boolean
+      required:
+      - id
+      - medication
+      - medication_name
+      - taken_at
+    Medication:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        dosage_mg:
+          type: integer
+        prescribed_per_day:
+          type: integer
+          description: Expected number of doses per day
+        adherence:
+          type: string
+          readOnly: true
+      required:
+      - adherence
+      - dosage_mg
+      - id
+      - name
+      - prescribed_per_day
+    Note:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        medication_id:
+          type: integer
+          writeOnly: true
+        medication_name:
+          type: string
+          readOnly: true
+        text:
+          type: string
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - date
+      - id
+      - medication_id
+      - medication_name
+      - text
+    PatchedDoseLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        medication:
+          type: integer
+        medication_name:
+          type: string
+          readOnly: true
+        taken_at:
+          type: string
+          format: date-time
+        was_taken:
+          type: boolean
+    PatchedMedication:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        dosage_mg:
+          type: integer
+        prescribed_per_day:
+          type: integer
+          description: Expected number of doses per day
+        adherence:
+          type: string
+          readOnly: true
+    PatchedNote:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        medication_id:
+          type: integer
+          writeOnly: true
+        medication_name:
+          type: string
+          readOnly: true
+        text:
+          type: string
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

@@ -4,6 +4,7 @@ from django.utils import timezone
 from .services import DrugInfoService
 
 
+
 class Medication(models.Model):
     """
     Represents a prescribed medication with dosage and daily schedule.
