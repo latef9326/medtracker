@@ -1,4 +1,4 @@
-import datetime, os
+from medtrackerapp.models import Medication
 from django.utils import timezone
 from .models import Note
 from .models import Medication
