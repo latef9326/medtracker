@@ -1,9 +1,10 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from medtrackerapp.models import Medication, Note
-from django.utils import timezone
-from datetime import timedelta
+from medtrackerapp.models import Medication
+from medtrackerapp.models import Note
+
+
 
 
 class NoteModelTests(APITestCase):
@@ -47,7 +48,7 @@ class NoteAPITests(APITestCase):
         )
 
         # Create notes with explicit dates to ensure ordering
-        now = timezone.now()
+
 
         # Older note
         self.note_older = Note.objects.create(
