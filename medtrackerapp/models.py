@@ -41,16 +41,16 @@ class Medication(models.Model):
         Compute the expected number of doses to be taken over a given number of days.
 
         Args:
-            days (int): Number of calendar days (must be ≥ 0).
+            days (int): Number of calendar days (must be ≥ 1).
 
         Returns:
             int: Expected dose count for the period.
 
         Raises:
-            ValueError: If days < 0 or prescribed_per_day ≤ 0.
+            ValueError: If days < 1 or prescribed_per_day ≤ 0.
         """
-        if days < 0 or self.prescribed_per_day <= 0:
-            raise ValueError("Days and schedule must be positive.")
+        if days < 1 or self.prescribed_per_day <= 0:
+            raise ValueError("Days must be positive (≥1) and prescribed_per_day must be > 0.")
         return days * self.prescribed_per_day
 
     def adherence_rate_over_period(self, start_date: _date, end_date: _date) -> float:
@@ -127,3 +127,26 @@ class DoseLog(models.Model):
         status = "Taken" if self.was_taken else "Missed"
         when = timezone.localtime(self.taken_at).strftime("%Y-%m-%d %H:%M")
         return f"{self.medication.name} at {when} - {status}"
+
+
+class Note(models.Model):
+    """
+    Doctor's notes associated with medications.
+
+    Notes can be added to track observations, side effects, or
+    treatment adjustments for a specific medication.
+    """
+    medication = models.ForeignKey(
+        Medication,
+        on_delete=models.CASCADE,
+        related_name='notes'
+    )
+    text = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date']
+
+    def __str__(self):
+        medication_name = self.medication.name if self.medication else "Unknown"
+        return f"Note for {medication_name} ({self.date.date()})"

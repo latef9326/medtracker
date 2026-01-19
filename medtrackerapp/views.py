@@ -2,100 +2,92 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from datetime import date
-from .models import Medication, DoseLog
-from .serializers import MedicationSerializer, DoseLogSerializer
+from .models import Medication, DoseLog, Note
+from .serializers import MedicationSerializer, DoseLogSerializer, NoteSerializer
 
 
 class MedicationViewSet(viewsets.ModelViewSet):
     """
     API endpoint for viewing and managing medications.
-
-    Provides standard CRUD operations via the Django REST Framework
-    `ModelViewSet`, as well as a custom action for retrieving
-    additional information from an external API (OpenFDA).
-
-    Endpoints:
-        - GET /medications/ — list all medications
-        - POST /medications/ — create a new medication
-        - GET /medications/{id}/ — retrieve a specific medication
-        - PUT/PATCH /medications/{id}/ — update a medication
-        - DELETE /medications/{id}/ — delete a medication
-        - GET /medications/{id}/info/ — fetch external drug info from OpenFDA
     """
     queryset = Medication.objects.all()
     serializer_class = MedicationSerializer
 
     @action(detail=True, methods=["get"], url_path="info")
     def get_external_info(self, request, pk=None):
-        """
-        Retrieve external drug information from the OpenFDA API.
-
-        Calls the `Medication.fetch_external_info()` method, which
-        delegates to the `DrugInfoService` for API access.
-
-        Args:
-            request (Request): The current HTTP request.
-            pk (int): Primary key of the medication record.
-
-        Returns:
-            Response:
-                - 200 OK: External API data returned successfully.
-                - 502 BAD GATEWAY: If the external API request failed.
-
-        Example:
-            GET /medications/1/info/
-        """
+        """Fetch external drug information for a medication."""
         medication = self.get_object()
         data = medication.fetch_external_info()
-
         if isinstance(data, dict) and data.get("error"):
             return Response(data, status=status.HTTP_502_BAD_GATEWAY)
         return Response(data)
+
+    @action(detail=True, methods=["get"], url_path="expected-doses")
+    def expected_doses(self, request, pk=None):
+        """
+        Calculate expected doses for given days.
+
+        GET /api/medications/<id>/expected-doses/?days=X
+        Returns: {medication_id, days, expected_doses}
+
+        Validates:
+        - 'days' parameter is required
+        - 'days' must be a positive integer
+        """
+        medication = self.get_object()
+        days_param = request.query_params.get("days")
+
+        # Validate days parameter
+        if not days_param:
+            return Response(
+                {"error": "Missing required parameter: days"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            days = int(days_param)
+            if days <= 0:
+                return Response(
+                    {"error": "days must be a positive integer"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        except ValueError:
+            return Response(
+                {"error": "days must be a valid integer"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Calculate expected doses
+        try:
+            expected = medication.expected_doses(days)
+            return Response({
+                "medication_id": medication.id,
+                "days": days,
+                "expected_doses": expected
+            }, status=status.HTTP_200_OK)
+        except ValueError as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class DoseLogViewSet(viewsets.ModelViewSet):
     """
     API endpoint for viewing and managing dose logs.
-
-    A DoseLog represents an event where a medication dose was either
-    taken or missed. This viewset provides standard CRUD operations
-    and a custom filtering action by date range.
-
-    Endpoints:
-        - GET /logs/ — list all dose logs
-        - POST /logs/ — create a new dose log
-        - GET /logs/{id}/ — retrieve a specific log
-        - PUT/PATCH /logs/{id}/ — update a dose log
-        - DELETE /logs/{id}/ — delete a dose log
-        - GET /logs/filter/?start=YYYY-MM-DD&end=YYYY-MM-DD —
-          filter logs within a date range
     """
     queryset = DoseLog.objects.all()
     serializer_class = DoseLogSerializer
 
     @action(detail=False, methods=["get"], url_path="filter")
     def filter_by_date(self, request):
-        """
-        Retrieve all dose logs within a given date range.
-
-        Query Parameters:
-            - start (YYYY-MM-DD): Start date of the range (inclusive).
-            - end (YYYY-MM-DD): End date of the range (inclusive).
-
-        Returns:
-            Response:
-                - 200 OK: A list of dose logs between the two dates.
-                - 400 BAD REQUEST: If start or end parameters are missing or invalid.
-
-        Example:
-            GET /logs/filter/?start=2025-11-01&end=2025-11-07
-        """
+        """Filter dose logs by date range."""
         start_date_str = request.query_params.get("start")
         end_date_str = request.query_params.get("end")
 
         if not start_date_str or not end_date_str:
             return Response(
-                {"error": "Both 'start' and 'end' query parameters are required."},
+                {"error": "Both 'start' and 'end' parameters are required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -104,13 +96,13 @@ class DoseLogViewSet(viewsets.ModelViewSet):
             end_date = date.fromisoformat(end_date_str)
         except ValueError:
             return Response(
-                {"error": "Invalid date format. Use YYYY-MM-DD."},
+                {"error": "Invalid date format. Use YYYY-MM-DD"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         if start_date > end_date:
             return Response(
-                {"error": "Start date must be before or equal to end date."},
+                {"error": "start_date must be before or equal to end_date"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -121,3 +113,57 @@ class DoseLogViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(logs, many=True)
         return Response(serializer.data)
+
+
+class NoteViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for managing doctor's notes.
+
+    Notes are associated with medications and can be used to track
+    observations, side effects, or treatment adjustments.
+
+    Allowed operations:
+    - GET /api/notes/ - list all notes
+    - GET /api/notes/<id>/ - retrieve specific note
+    - POST /api/notes/ - create new note
+    - DELETE /api/notes/<id>/ - delete note
+
+    Update operations (PUT, PATCH) are intentionally disabled.
+    """
+    queryset = Note.objects.all().select_related('medication')
+    serializer_class = NoteSerializer
+
+    def get_queryset(self):
+        """Optionally filter notes by medication."""
+        queryset = super().get_queryset()
+        medication_id = self.request.query_params.get('medication')
+
+        if medication_id:
+            try:
+                medication_id = int(medication_id)
+                queryset = queryset.filter(medication_id=medication_id)
+            except ValueError:
+                # Invalid medication ID, return empty queryset
+                queryset = queryset.none()
+
+        return queryset
+
+    def update(self, request, *args, **kwargs):
+        """Disable update operations."""
+        return Response(
+            {
+                "detail": "Method 'PUT' not allowed.",
+                "error": "Notes cannot be updated once created."
+            },
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
+
+    def partial_update(self, request, *args, **kwargs):
+        """Disable partial update operations."""
+        return Response(
+            {
+                "detail": "Method 'PATCH' not allowed.",
+                "error": "Notes cannot be updated once created."
+            },
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )
