@@ -3,7 +3,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from medtrackerapp.models import Medication
 from medtrackerapp.models import Note
-from django.utils import timezone
+
 
 
 
