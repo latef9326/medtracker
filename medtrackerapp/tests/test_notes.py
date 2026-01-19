@@ -48,7 +48,7 @@ class NoteAPITests(APITestCase):
         )
 
         # Create notes with explicit dates to ensure ordering
-        now = timezone.now()
+
 
         # Older note
         self.note_older = Note.objects.create(

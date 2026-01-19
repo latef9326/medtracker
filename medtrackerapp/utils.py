@@ -1,17 +1,13 @@
-from medtrackerapp.models import Medication
 from django.utils import timezone
-from .models import Note
-from .models import Medication
+from .models import Note  # tylko to co potrzebne
 
-
-def last_notes_for_med(med_id:int, limit=10):
+def last_notes_for_med(med_id: int, limit=10):
     notes = Note.objects.filter(medication_id=med_id).order_by('-created_at')
-    result=[]
+    result = []
     for n in notes[:limit]:
-        if n.text != None:
+        if n.text is not None:  # poprawione porównanie do None
             result.append(n.text)
     return result
-
 
 def days_since(date):
     now = timezone.now()
