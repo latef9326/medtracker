@@ -18,22 +18,17 @@ ALLOWED_HOSTS = []
 
 # APPLICATIONS
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-
-    # Django REST Framework
-    "rest_framework",
-
-    # Swagger / OpenAPI (REQUIRED BY LAB)
-    "drf_yasg",
-
-    # Local app
-    "medtrackerapp",
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'drf_yasg',  # <- musi być
+    'medtrackerapp',
 ]
+
 
 # MIDDLEWARE
 MIDDLEWARE = [

@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
 from datetime import date
 from .models import Medication, DoseLog, Note
 from .serializers import MedicationSerializer, DoseLogSerializer, NoteSerializer
@@ -132,6 +133,10 @@ class NoteViewSet(viewsets.ModelViewSet):
     """
     queryset = Note.objects.all().select_related('medication')
     serializer_class = NoteSerializer
+
+    # 🔹 Added SearchFilter for searching by medication name
+    filter_backends = (SearchFilter,)
+    search_fields = ['medication__name']
 
     def get_queryset(self):
         """Optionally filter notes by medication."""
